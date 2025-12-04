@@ -1,10 +1,6 @@
 import { addDays, nextMonday, parse } from 'date-fns';
 import type { Priority } from '@/types';
 
-interface QuickTaskParseOptions {
-  fallbackProjectId?: string;
-}
-
 interface QuickTaskParseResult {
   content: string;
   description?: string;
@@ -32,12 +28,9 @@ const DATE_KEYWORDS: Record<string, () => Date> = {
   monday: () => nextMonday(new Date()),
 };
 
-export const parseQuickTaskInput = (
-  input: string,
-  options: QuickTaskParseOptions = {},
-): QuickTaskParseResult => {
+export const parseQuickTaskInput = (input: string): QuickTaskParseResult => {
   const tokens = input.split(/\s+/);
-  let contentTokens: string[] = [];
+  const contentTokens: string[] = [];
   const labels: string[] = [];
   let priority: Priority = null;
   let dueDate: Date | undefined;
