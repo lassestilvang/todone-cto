@@ -4,17 +4,23 @@ import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { useProjectStore } from '@/stores/useProjectStore';
 import { useTaskStore } from '@/stores/useTaskStore';
+import { useLabelStore } from '@/stores/useLabelStore';
+import { useFilterStore } from '@/stores/useFilterStore';
 import { useUIStore } from '@/stores/useUIStore';
 
 export const AppLayout: React.FC = () => {
   const { load: loadProjects } = useProjectStore();
   const { load: loadTasks } = useTaskStore();
+  const { load: loadLabels } = useLabelStore();
+  const { load: loadFilters } = useFilterStore();
   const { isSidebarOpen } = useUIStore();
 
   useEffect(() => {
     loadProjects();
     loadTasks();
-  }, [loadProjects, loadTasks]);
+    loadLabels();
+    loadFilters();
+  }, [loadProjects, loadTasks, loadLabels, loadFilters]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-900">

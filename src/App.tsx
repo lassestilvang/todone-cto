@@ -6,6 +6,8 @@ import { InboxView } from './features/views/InboxView';
 import { TodayView } from './features/views/TodayView';
 import { UpcomingView } from './features/views/UpcomingView';
 import { ProjectView } from './features/views/ProjectView';
+import { LabelsView } from './features/views/LabelsView';
+import { FiltersView } from './features/views/FiltersView';
 import { CommandPalette } from './features/command/CommandPalette';
 import { QuickAddModal } from './features/tasks/QuickAddModal';
 
@@ -42,6 +44,8 @@ export const App: React.FC = () => {
           <Route path="inbox" element={<InboxView />} />
           <Route path="today" element={<TodayView />} />
           <Route path="upcoming" element={<UpcomingView />} />
+          <Route path="filters" element={<FiltersView />} />
+          <Route path="labels" element={<LabelsView />} />
           <Route path="project/:projectId" element={<ProjectView />} />
         </Route>
 

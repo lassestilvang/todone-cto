@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type ActiveView = 'inbox' | 'today' | 'upcoming' | 'project';
+export type ActiveView = 'inbox' | 'today' | 'upcoming' | 'project' | 'filters' | 'labels';
 
 interface UIState {
   activeView: ActiveView;

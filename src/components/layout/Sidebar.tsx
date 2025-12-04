@@ -1,4 +1,4 @@
-import { Inbox, Calendar, ChevronRight, Plus, ChevronDown } from 'lucide-react';
+import { Inbox, Calendar, ChevronRight, Plus, ChevronDown, Tags, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/useUIStore';
@@ -12,7 +12,7 @@ export const Sidebar: React.FC = () => {
   const { projects } = useProjectStore();
   const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
 
-  const handleViewChange = (view: 'inbox' | 'today' | 'upcoming') => {
+  const handleViewChange = (view: 'inbox' | 'today' | 'upcoming' | 'filters' | 'labels') => {
     setActiveView(view);
     setSelectedProjectId(null);
     navigate(`/${view}`);
@@ -77,6 +77,35 @@ export const Sidebar: React.FC = () => {
           <Calendar className="h-4 w-4" />
           <span>Upcoming</span>
         </button>
+
+        <div className="pt-4">
+          <p className="px-1 text-xs font-semibold uppercase tracking-wide text-white/40">Filters & Labels</p>
+          <button
+            onClick={() => handleViewChange('filters')}
+            className={cn(
+              'mt-2 flex w-full items-center gap-3 rounded-6 px-3 py-2 text-sm transition',
+              activeView === 'filters'
+                ? 'bg-brand-500/20 text-brand-300'
+                : 'text-white/70 hover:bg-white/5 hover:text-white',
+            )}
+          >
+            <Filter className="h-4 w-4" />
+            <span>Filters</span>
+          </button>
+
+          <button
+            onClick={() => handleViewChange('labels')}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-6 px-3 py-2 text-sm transition',
+              activeView === 'labels'
+                ? 'bg-brand-500/20 text-brand-300'
+                : 'text-white/70 hover:bg-white/5 hover:text-white',
+            )}
+          >
+            <Tags className="h-4 w-4" />
+            <span>Labels</span>
+          </button>
+        </div>
 
         <div className="pt-6">
           <button
