@@ -55,7 +55,7 @@ export const UpcomingView: React.FC = () => {
               </div>
 
               {dayTasks.length > 0 ? (
-                <TaskList tasks={dayTasks} />
+                <TaskList tasks={dayTasks} enableDragDrop />
               ) : (
                 <p className="py-4 text-center text-sm text-white/40">No tasks scheduled</p>
               )}

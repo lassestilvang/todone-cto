@@ -72,6 +72,7 @@ export const ProjectView: React.FC = () => {
               <TaskList
                 tasks={projectTasks.filter((task) => task.sectionId === section.id && !task.completed)}
                 emptyMessage="No tasks in this section yet"
+                enableDragDrop
               />
             </div>
           ))}

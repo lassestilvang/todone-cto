@@ -31,7 +31,17 @@ Phase 2 adds essential features to make Todone more powerful and flexible. This 
   - Renders nested sub-tasks recursively
   - Works seamlessly across all views (Inbox, Today, Upcoming, Projects)
 
-### 2. Enhanced Search & Command Palette
+### 2. Drag & Drop Reordering
+- ✅ **TaskList Enhancements**
+  - Added @dnd-kit-powered drag-and-drop for list-based views
+  - Smooth reordering with keyboard and pointer sensors
+  - Persists new order using task `order` field
+  - Works in Inbox, Today, Upcoming, and Project sections
+- ✅ **Sub-task Compatibility**
+  - Drag handles wrap entire task cards (including nested tasks)
+  - Visual feedback (opacity) when dragging
+
+### 3. Enhanced Search & Command Palette
 - ✅ **Fuzzy Search Engine**
   - `globalSearch` utility with relevance scoring
   - Searches tasks, projects, labels, and filters simultaneously
@@ -42,7 +52,7 @@ Phase 2 adds essential features to make Todone more powerful and flexible. This 
   - Intelligent fallback to quick navigation when no results
   - Quick project shortcuts remain available
 
-### 3. Labels System (Full CRUD)
+### 4. Labels System (Full CRUD)
 - ✅ **Label Store** (`useLabelStore`)
   - Create, read, update, delete labels
   - Load all labels from IndexedDB

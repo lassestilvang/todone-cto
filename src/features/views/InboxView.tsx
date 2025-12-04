@@ -21,6 +21,7 @@ export const InboxView: React.FC = () => {
         <TaskList
           tasks={inboxTasks}
           emptyMessage="Your inbox is clear. Add a new task or enjoy the clarity!"
+          enableDragDrop
         />
       </div>
     </div>

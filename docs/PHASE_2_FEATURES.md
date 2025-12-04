@@ -306,6 +306,28 @@ executeFilterQuery(tasks: Task[], queryString: string): Task[]
    - Task distribution by label
    - Label productivity insights
 
+## Drag & Drop Reordering
+
+### Overview
+Tasks can now be reordered with drag-and-drop, powered by @dnd-kit.
+
+### Features
+- **TaskList Upgrade**: The existing TaskList component now has an `enableDragDrop` prop.
+- **Keyboard + Pointer Support**: Uses PointerSensor and KeyboardSensor for accessibility.
+- **Order Persistence**: New positions update each task's `order` field via Zustand store.
+- **View Coverage**: Enabled in Inbox, Today, Upcoming (per-day lists), and Project sections.
+- **Visual Cues**: Dragged tasks fade to 50% opacity and follow cursor smoothly.
+
+### Usage
+```tsx
+<TaskList tasks={inboxTasks} enableDragDrop />
+```
+
+### Future Enhancements
+- Drag between sections/projects
+- Reorder nested sub-tasks independently
+- Board view drag columns
+
 ## Sub-tasks (Task Hierarchy)
 
 ### Overview

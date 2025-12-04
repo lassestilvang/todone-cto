@@ -55,7 +55,7 @@ export const TodayView: React.FC = () => {
             <AlertCircle className="h-4 w-4 text-red-400" />
             Overdue
           </div>
-          <TaskList tasks={overdueTasks} emptyMessage="No overdue tasks" />
+          <TaskList tasks={overdueTasks} emptyMessage="No overdue tasks" enableDragDrop />
         </div>
       )}
 
@@ -64,7 +64,7 @@ export const TodayView: React.FC = () => {
           <Flame className="h-4 w-4 text-brand-400" />
           Today
         </div>
-        <TaskList tasks={todayTasks} emptyMessage="No tasks scheduled for today." />
+        <TaskList tasks={todayTasks} emptyMessage="No tasks scheduled for today." enableDragDrop />
       </div>
     </div>
   );
