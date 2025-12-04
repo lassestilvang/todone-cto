@@ -8,7 +8,7 @@ interface ProjectState {
   sections: Section[];
   isLoading: boolean;
   load: () => Promise<void>;
-  addProject: (input: Pick<Project, 'name' | 'color' | 'viewType'>) => Promise<Project>;
+  addProject: (input: Pick<Project, 'name' | 'color' | 'viewType'> | Pick<Project, 'name' | 'color'>) => Promise<Project>;
   updateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   addSection: (input: { name: string; projectId: string; order?: number }) => Promise<Section>;
@@ -35,7 +35,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       id: generateId(),
       name: input.name,
       color: input.color,
-      viewType: input.viewType,
+      viewType: 'viewType' in input && input.viewType ? input.viewType : 'list',
       favorite: false,
       shared: false,
       parentProjectId: undefined,

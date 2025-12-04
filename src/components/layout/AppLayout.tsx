@@ -7,6 +7,7 @@ import { useTaskStore } from '@/stores/useTaskStore';
 import { useLabelStore } from '@/stores/useLabelStore';
 import { useFilterStore } from '@/stores/useFilterStore';
 import { useUIStore } from '@/stores/useUIStore';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
 export const AppLayout: React.FC = () => {
   const { load: loadProjects } = useProjectStore();
@@ -14,6 +15,9 @@ export const AppLayout: React.FC = () => {
   const { load: loadLabels } = useLabelStore();
   const { load: loadFilters } = useFilterStore();
   const { isSidebarOpen } = useUIStore();
+
+  // Enable global keyboard shortcuts
+  useKeyboardShortcuts();
 
   useEffect(() => {
     loadProjects();

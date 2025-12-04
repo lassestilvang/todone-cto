@@ -12,6 +12,7 @@ interface TaskComposerProps {
   autoFocus?: boolean;
   projectId?: string;
   sectionId?: string;
+  compact?: boolean;
 }
 
 export const TaskComposer: React.FC<TaskComposerProps> = ({
@@ -19,6 +20,7 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
   autoFocus,
   projectId,
   sectionId,
+  compact = false,
 }) => {
   const [value, setValue] = useState('');
   const [duration, setDuration] = useState<number | undefined>();
@@ -77,15 +79,16 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-8 border border-white/10 bg-white/5 p-4">
+    <form onSubmit={handleSubmit} className={`rounded-8 border border-white/10 bg-white/5 ${compact ? 'p-2' : 'p-4'}`}>
       <Textarea
         autoFocus={autoFocus}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        rows={2}
+        rows={compact ? 1 : 2}
       />
 
+      {!compact && (
       <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/60">
         <div className="flex items-center gap-1">
           <Hash className="h-3 w-3" />
@@ -127,6 +130,15 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
           </Button>
         </div>
       </div>
+      )}
+
+      {compact && (
+        <div className="mt-2">
+          <Button type="submit" size="sm" loading={isProcessing} disabled={!value.trim()}>
+            Add
+          </Button>
+        </div>
+      )}
     </form>
   );
 };

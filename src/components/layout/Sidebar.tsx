@@ -1,4 +1,5 @@
 import { Inbox, Calendar, ChevronRight, Plus, ChevronDown, Tags, Filter } from 'lucide-react';
+import { CreateProjectModal } from '@/components/projects/CreateProjectModal';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/useUIStore';
@@ -11,6 +12,7 @@ export const Sidebar: React.FC = () => {
   const { activeView, setActiveView, setSelectedProjectId } = useUIStore();
   const { projects } = useProjectStore();
   const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
+  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
   const handleViewChange = (view: 'inbox' | 'today' | 'upcoming' | 'filters' | 'labels') => {
     setActiveView(view);
@@ -108,17 +110,26 @@ export const Sidebar: React.FC = () => {
         </div>
 
         <div className="pt-6">
-          <button
-            onClick={() => setIsProjectsExpanded(!isProjectsExpanded)}
-            className="flex w-full items-center justify-between px-1 py-2 text-xs font-semibold uppercase tracking-wide text-white/50 hover:text-white/70"
-          >
-            <span>Projects</span>
-            {isProjectsExpanded ? (
-              <ChevronDown className="h-3 w-3" />
-            ) : (
-              <ChevronRight className="h-3 w-3" />
-            )}
-          </button>
+          <div className="flex items-center justify-between px-1 py-2">
+            <button
+              onClick={() => setIsProjectsExpanded(!isProjectsExpanded)}
+              className="flex flex-1 items-center justify-between text-xs font-semibold uppercase tracking-wide text-white/50 hover:text-white/70"
+            >
+              <span>Projects</span>
+              {isProjectsExpanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronRight className="h-3 w-3" />
+              )}
+            </button>
+            <button
+              onClick={() => setIsCreateProjectOpen(true)}
+              className="ml-2 rounded-6 border border-white/10 p-1 text-white/50 transition hover:text-white"
+              aria-label="Create project"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
+          </div>
 
           {isProjectsExpanded && (
             <div className="mt-1 space-y-1">
@@ -140,7 +151,12 @@ export const Sidebar: React.FC = () => {
                 </button>
               ))}
 
-              <Button variant="ghost" size="sm" className="w-full justify-start">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
+                onClick={() => setIsCreateProjectOpen(true)}
+              >
                 <Plus className="h-4 w-4" />
                 Add project
               </Button>
@@ -148,6 +164,7 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
       </nav>
+      <CreateProjectModal isOpen={isCreateProjectOpen} onClose={() => setIsCreateProjectOpen(false)} />
     </aside>
   );
 };

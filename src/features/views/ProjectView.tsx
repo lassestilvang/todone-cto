@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { LayoutGrid, Columns, CalendarRange, Sparkles } from 'lucide-react';
 import { useProjectStore } from '@/stores/useProjectStore';
@@ -6,6 +6,8 @@ import { useTaskStore } from '@/stores/useTaskStore';
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskComposer } from '@/components/tasks/TaskComposer';
 import { Card } from '@/components/ui/Card';
+import { ProjectBoard } from '@/components/projects/ProjectBoard';
+import { cn } from '@/lib/utils';
 
 const viewModes = [
   { id: 'list', label: 'List', icon: LayoutGrid },
@@ -17,6 +19,7 @@ export const ProjectView: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { projects, sections } = useProjectStore();
   const { getTasksByProject } = useTaskStore();
+  const [activeViewMode, setActiveViewMode] = useState<'list' | 'board' | 'calendar'>('list');
 
   const project = projects.find((p) => p.id === projectId);
   const projectSections = sections.filter((section) => section.projectId === projectId);
@@ -24,6 +27,12 @@ export const ProjectView: React.FC = () => {
     getTasksByProject,
     projectId,
   ]);
+
+  useEffect(() => {
+    if (project?.viewType && ['list', 'board', 'calendar'].includes(project.viewType)) {
+      setActiveViewMode(project.viewType as 'list' | 'board' | 'calendar');
+    }
+  }, [project?.viewType]);
 
   if (!project) {
     return (
@@ -45,7 +54,13 @@ export const ProjectView: React.FC = () => {
           {viewModes.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              className="flex items-center gap-1 rounded-6 border border-white/10 px-3 py-1.5 text-xs text-white/60 transition hover:bg-white/5"
+              onClick={() => setActiveViewMode(id as 'list' | 'board' | 'calendar')}
+              className={cn(
+                'flex items-center gap-1 rounded-6 border px-3 py-1.5 text-xs transition',
+                activeViewMode === id
+                  ? 'border-brand-500 bg-brand-500/20 text-brand-300'
+                  : 'border-white/10 text-white/60 hover:bg-white/5',
+              )}
             >
               <Icon className="h-4 w-4" />
               {label}
@@ -63,19 +78,32 @@ export const ProjectView: React.FC = () => {
         </Card>
       ) : (
         <div className="space-y-6">
-          {projectSections.map((section) => (
-            <div key={section.id} className="space-y-3">
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold text-white">{section.name}</h2>
-                <span className="text-xs text-white/50">Order {section.order + 1}</span>
+          {activeViewMode === 'list' && (
+            projectSections.map((section) => (
+              <div key={section.id} className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-white">{section.name}</h2>
+                  <span className="text-xs text-white/50">Order {section.order + 1}</span>
+                </div>
+                <TaskList
+                  tasks={projectTasks.filter((task) => task.sectionId === section.id && !task.completed)}
+                  emptyMessage="No tasks in this section yet"
+                  enableDragDrop
+                />
               </div>
-              <TaskList
-                tasks={projectTasks.filter((task) => task.sectionId === section.id && !task.completed)}
-                emptyMessage="No tasks in this section yet"
-                enableDragDrop
-              />
-            </div>
-          ))}
+            ))
+          )}
+
+          {activeViewMode === 'board' && (
+            <ProjectBoard sections={projectSections} tasks={projectTasks} projectId={projectId!} />
+          )}
+
+          {activeViewMode === 'calendar' && (
+            <Card className="text-center text-white/60">
+              <Sparkles className="mx-auto mb-3 h-8 w-8 text-brand-400" />
+              <p>Calendar view is coming soon!</p>
+            </Card>
+          )}
         </div>
       )}
     </div>
