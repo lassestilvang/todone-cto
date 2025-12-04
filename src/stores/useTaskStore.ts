@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { db } from '@/lib/database';
 import type { Task } from '@/types';
 import { generateId } from '@/lib/utils';
+import { useProductivityStore } from './useProductivityStore';
 
 interface TaskState {
   tasks: Task[];
@@ -84,6 +85,9 @@ export const useTaskStore = create<TaskState>((set, get) => ({
           : task,
       ),
     }));
+    
+    // Update productivity stats when task is completed
+    useProductivityStore.getState().updateStats();
   },
 
   uncompleteTask: async (id) => {
@@ -95,6 +99,8 @@ export const useTaskStore = create<TaskState>((set, get) => ({
           : task,
       ),
     }));
+
+    useProductivityStore.getState().updateStats();
   },
 
   getTaskById: (id) => {

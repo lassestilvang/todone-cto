@@ -30,6 +30,12 @@ Welcome to Todone! This guide will help you get started and become productive qu
 - Assign colors and sections
 - View tasks by project
 
+### Productivity
+- Track daily and weekly goals
+- Earn Karma and level up through nine tiers
+- Monitor streaks and completion trends
+- Visual charts for last 7 days and 4 weeks
+
 ## Creating Tasks
 
 ### Quick Add (Global)
@@ -79,8 +85,29 @@ Welcome to Todone! This guide will help you get started and become productive qu
 
 ## Productivity Features
 
-- Karma system and streaks coming in Phase 3
-- Productivity dashboard planned for Phase 3
+### Karma System
+- **Earn Karma**: Complete tasks to earn points (10 points per completed task)
+- **Lose Karma**: Overdue tasks reduce your karma (2 points per overdue task)
+- **Level Up**: Progress through 9 levels from Beginner to Enlightened
+- **View Progress**: Track your level progress and points needed to next level
+
+### Goals & Streaks
+- **Daily Goal**: Set a target number of tasks to complete each day
+- **Weekly Goal**: Set a target for the week
+- **Current Streak**: Maintain consecutive days meeting your daily goal
+- **Longest Streak**: Track your best streak ever
+- **Visual Progress**: See progress bars and percentages
+
+### Charts
+- **Last 7 Days**: Bar chart showing daily completion counts
+- **Last 4 Weeks**: Line chart showing trends over time
+- **Stats Cards**: Total completed, current streak, daily progress
+
+### Settings
+- Configure daily and weekly goals
+- Set goals to 0 to disable tracking
+- Toggle karma system on/off
+- Enable/disable goal celebrations
 
 ## Settings
 

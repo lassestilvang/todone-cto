@@ -12,6 +12,7 @@
 - `G then I`: Go to Inbox
 - `G then T`: Go to Today
 - `G then U`: Go to Upcoming
+- `G then P`: Go to Productivity
 - `G then F`: Go to Filters
 - `G then L`: Go to Labels
 

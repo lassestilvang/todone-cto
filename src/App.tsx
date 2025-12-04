@@ -8,6 +8,7 @@ import { UpcomingView } from './features/views/UpcomingView';
 import { ProjectView } from './features/views/ProjectView';
 import { LabelsView } from './features/views/LabelsView';
 import { FiltersView } from './features/views/FiltersView';
+import { ProductivityView } from './features/views/ProductivityView';
 import { CommandPalette } from './features/command/CommandPalette';
 import { QuickAddModal } from './features/tasks/QuickAddModal';
 
@@ -46,6 +47,7 @@ export const App: React.FC = () => {
           <Route path="upcoming" element={<UpcomingView />} />
           <Route path="filters" element={<FiltersView />} />
           <Route path="labels" element={<LabelsView />} />
+          <Route path="productivity" element={<ProductivityView />} />
           <Route path="project/:projectId" element={<ProjectView />} />
         </Route>
 

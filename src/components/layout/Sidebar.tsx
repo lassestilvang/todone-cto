@@ -1,4 +1,4 @@
-import { Inbox, Calendar, ChevronRight, Plus, ChevronDown, Tags, Filter } from 'lucide-react';
+import { Inbox, Calendar, ChevronRight, Plus, ChevronDown, Tags, Filter, TrendingUp } from 'lucide-react';
 import { CreateProjectModal } from '@/components/projects/CreateProjectModal';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,7 @@ export const Sidebar: React.FC = () => {
   const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
-  const handleViewChange = (view: 'inbox' | 'today' | 'upcoming' | 'filters' | 'labels') => {
+  const handleViewChange = (view: 'inbox' | 'today' | 'upcoming' | 'filters' | 'labels' | 'productivity') => {
     setActiveView(view);
     setSelectedProjectId(null);
     navigate(`/${view}`);
@@ -79,6 +79,21 @@ export const Sidebar: React.FC = () => {
           <Calendar className="h-4 w-4" />
           <span>Upcoming</span>
         </button>
+
+        <div className="border-t border-white/10 pt-4 mt-4">
+          <button
+            onClick={() => handleViewChange('productivity')}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-6 px-3 py-2 text-sm transition',
+              activeView === 'productivity'
+                ? 'bg-brand-500/20 text-brand-300'
+                : 'text-white/70 hover:bg-white/5 hover:text-white',
+            )}
+          >
+            <TrendingUp className="h-4 w-4" />
+            <span>Productivity</span>
+          </button>
+        </div>
 
         <div className="pt-4">
           <p className="px-1 text-xs font-semibold uppercase tracking-wide text-white/40">Filters & Labels</p>
