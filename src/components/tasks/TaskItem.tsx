@@ -3,6 +3,7 @@ import type { Task } from '@/types';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { cn, formatDate, getPriorityColor, isOverdue } from '@/lib/utils';
 import { useTaskStore } from '@/stores/useTaskStore';
+import { useUIStore } from '@/stores/useUIStore';
 
 interface TaskItemProps {
   task: Task;
@@ -12,6 +13,7 @@ interface TaskItemProps {
 
 export const TaskItem: React.FC<TaskItemProps> = ({ task, onClick, draggable = false }) => {
   const { completeTask, uncompleteTask } = useTaskStore();
+  const { openTaskDetail } = useUIStore();
 
   const handleCheck = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -22,15 +24,23 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onClick, draggable = f
     }
   };
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      openTaskDetail(task.id);
+    }
+  };
+
   const overdue = isOverdue(task.dueDate);
 
   return (
     <div
       className={cn(
-        'group flex items-start gap-3 rounded-6 border border-transparent px-3 py-2.5 transition hover:border-white/10 hover:bg-white/5',
+        'group flex items-start gap-3 rounded-6 border border-transparent px-3 py-2.5 transition hover:border-white/10 hover:bg-white/5 cursor-pointer',
         task.completed && 'opacity-50',
       )}
-      onClick={onClick}
+      onClick={handleClick}
     >
       {draggable && (
         <button className="mt-0.5 opacity-0 transition group-hover:opacity-100">

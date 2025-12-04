@@ -15,11 +15,15 @@ interface UIState {
   isQuickAddOpen: boolean;
   isCommandPaletteOpen: boolean;
   selectedProjectId: string | null;
+  selectedTaskId: string | null;
+  isTaskDetailOpen: boolean;
   toggleSidebar: () => void;
   openQuickAdd: () => void;
   closeQuickAdd: () => void;
   setActiveView: (view: ActiveView) => void;
   setSelectedProjectId: (id: string | null) => void;
+  openTaskDetail: (taskId: string) => void;
+  closeTaskDetail: () => void;
   toggleCommandPalette: () => void;
   closeCommandPalette: () => void;
 }
@@ -30,6 +34,8 @@ export const useUIStore = create<UIState>((set) => ({
   isQuickAddOpen: false,
   isCommandPaletteOpen: false,
   selectedProjectId: null,
+  selectedTaskId: null,
+  isTaskDetailOpen: false,
 
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
 
@@ -38,6 +44,9 @@ export const useUIStore = create<UIState>((set) => ({
 
   setActiveView: (view) => set({ activeView: view }),
   setSelectedProjectId: (id) => set({ selectedProjectId: id }),
+
+  openTaskDetail: (taskId) => set({ selectedTaskId: taskId, isTaskDetailOpen: true }),
+  closeTaskDetail: () => set({ selectedTaskId: null, isTaskDetailOpen: false }),
 
   toggleCommandPalette: () =>
     set((state) => ({ isCommandPaletteOpen: !state.isCommandPaletteOpen })),

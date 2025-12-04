@@ -59,8 +59,10 @@ Welcome to Todone! This guide will help you get started and become productive qu
 ## Managing Tasks
 
 - **Complete a task**: Click the checkbox
-- **Edit a task**: Click the task to open details (planned)
-- **Delete a task**: Options menu (planned)
+- **View details & comments**: Click any task to open the detail modal
+- **Edit description**: Use the description editor inside the detail modal
+- **Add comments**: Scroll to the comments section, type your note, and send
+- **Delete a task**: Detail modal → Delete button
 
 ## Navigation
 
@@ -81,7 +83,18 @@ Welcome to Todone! This guide will help you get started and become productive qu
 
 - Create projects to organize tasks
 - Add sections within projects
-- Each project supports multiple views (list, board, calendar coming soon)
+- Each project supports multiple views:
+  - **List**: Traditional task list with sections
+  - **Board**: Kanban-style columns (one per section)
+  - **Calendar**: Coming soon
+
+## Comments & Collaboration
+
+- **Add Comments**: Click any task → scroll to comments → type and send
+- **View Comments**: See all task comments with timestamps
+- **Delete Comments**: Hover over your comment → click delete icon
+- **@Mentions**: Type @name in comments (UI ready, full parsing coming soon)
+- **Task Discussions**: Keep all context in one place with task comments
 
 ## Productivity Features
 

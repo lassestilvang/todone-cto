@@ -11,6 +11,9 @@ import { FiltersView } from './features/views/FiltersView';
 import { ProductivityView } from './features/views/ProductivityView';
 import { CommandPalette } from './features/command/CommandPalette';
 import { QuickAddModal } from './features/tasks/QuickAddModal';
+import { TaskDetailModal } from './components/tasks/TaskDetailModal';
+import { useUIStore } from './stores/useUIStore';
+import { useTaskStore } from './stores/useTaskStore';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -24,6 +27,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 export const App: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
+  const { selectedTaskId, isTaskDetailOpen, closeTaskDetail } = useUIStore();
+  const { getTaskById } = useTaskStore();
+
+  const selectedTask = selectedTaskId ? getTaskById(selectedTaskId) ?? null : null;
 
   return (
     <BrowserRouter>
@@ -56,6 +63,7 @@ export const App: React.FC = () => {
 
       <CommandPalette />
       <QuickAddModal />
+      <TaskDetailModal task={selectedTask} isOpen={isTaskDetailOpen} onClose={closeTaskDetail} />
     </BrowserRouter>
   );
 };

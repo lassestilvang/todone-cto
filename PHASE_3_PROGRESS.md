@@ -74,6 +74,7 @@ Phase 3 builds on the solid foundation from Phases 1 & 2, adding advanced produc
   - `G + I`: Go to Inbox
   - `G + T`: Go to Today
   - `G + U`: Go to Upcoming
+  - `G + P`: Go to Productivity
   - `G + F`: Go to Filters
   - `G + L`: Go to Labels
 - ✅ **G-Key Navigation Menu**
@@ -115,20 +116,58 @@ Phase 3 builds on the solid foundation from Phases 1 & 2, adding advanced produc
   - Calendar placeholder (coming soon)
   - Remembers project's `viewType` preference
 
+### 4. Task Comments System ⭐⭐⭐
+- ✅ **Comment Store** (`useCommentStore`)
+  - Full CRUD operations for comments
+  - Load comments by task ID
+  - Real-time comment sync with IndexedDB
+  - Delete and update comment functionality
+- ✅ **Task Detail Modal**
+  - Full-screen modal for task details
+  - Task completion toggle
+  - Editable task description with rich textarea
+  - Save/cancel description editing
+  - Metadata display (due date, priority, labels)
+  - Task deletion with confirmation
+- ✅ **Comments Section**
+  - List all comments for a task
+  - Display comment author and timestamp
+  - Formatted timestamps (e.g., "Dec 18, 2024 at 3:45 PM")
+  - Delete comment button
+  - Empty state when no comments exist
+- ✅ **Add Comment Form**
+  - Multi-line textarea for comment input
+  - @mention support (UI ready, parsing TBD)
+  - Submit button with loading state
+  - Clear form after submission
+  - Disabled when empty
+- ✅ **UI Integration**
+  - Click task to open detail modal
+  - Global modal state in UIStore
+  - Integrated with App.tsx
+  - Smooth modal transitions
+  - Comments icon with count indicator
+- ✅ **Features**
+  - Real-time comment count
+  - Whitespace-preserved comment rendering
+  - User attribution (shows current user name)
+  - Time-based sorting (oldest first)
+
 ## 📊 Phase 3 Statistics
 
 ### Code Additions
-- **New Components**: 3 (CreateProjectModal, ProjectBoard, ProductivityView)
-- **New Stores**: 1 (useProductivityStore)
+- **New Components**: 4 (CreateProjectModal, ProjectBoard, ProductivityView, TaskDetailModal)
+- **New Stores**: 2 (useProductivityStore, useCommentStore)
 - **New Hooks**: 1 (useKeyboardShortcuts)
-- **Updated Components**: 5 (Sidebar, TaskComposer, ProjectView, TaskStore, UIStore)
-- **Lines of Code Added**: ~1,200+
+- **Updated Components**: 7 (Sidebar, TaskComposer, ProjectView, TaskStore, UIStore, TaskItem, App)
+- **Lines of Code Added**: ~1,500+ (Phase 3 total)
 
 ### Bundle Impact
-- **Bundle Size**: 845 KB (251 KB gzipped) - increased by ~400 KB due to Recharts
+- **Bundle Size**: 852 KB (252 KB gzipped) - increased by ~7 KB for comments system
 - **Performance**: Maintained sub-100ms interaction response
 - **Recharts**: Large but necessary for charts, consider lazy loading in future
 - **Keyboard listener**: Minimal overhead, cleans up properly
+- **Comments System**: Lightweight, IndexedDB-backed with minimal overhead
 
 ### Build Quality
 - ✅ TypeScript compilation: **No errors**
