@@ -7,7 +7,8 @@ export type ActiveView =
   | 'project'
   | 'filters'
   | 'labels'
-  | 'productivity';
+  | 'productivity'
+  | 'settings';
 
 interface UIState {
   activeView: ActiveView;

@@ -88,6 +88,10 @@ export const useKeyboardShortcuts = () => {
             setActiveView('productivity');
             navigate('/productivity');
             break;
+          case 's':
+            setActiveView('settings');
+            navigate('/settings');
+            break;
         }
         return;
       }

@@ -9,6 +9,7 @@ import { ProjectView } from './features/views/ProjectView';
 import { LabelsView } from './features/views/LabelsView';
 import { FiltersView } from './features/views/FiltersView';
 import { ProductivityView } from './features/views/ProductivityView';
+import { SettingsView } from './features/views/SettingsView';
 import { CommandPalette } from './features/command/CommandPalette';
 import { QuickAddModal } from './features/tasks/QuickAddModal';
 import { TaskDetailModal } from './components/tasks/TaskDetailModal';
@@ -55,6 +56,7 @@ export const App: React.FC = () => {
           <Route path="filters" element={<FiltersView />} />
           <Route path="labels" element={<LabelsView />} />
           <Route path="productivity" element={<ProductivityView />} />
+          <Route path="settings" element={<SettingsView />} />
           <Route path="project/:projectId" element={<ProjectView />} />
         </Route>
 

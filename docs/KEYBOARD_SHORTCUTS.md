@@ -15,6 +15,7 @@
 - `G then P`: Go to Productivity
 - `G then F`: Go to Filters
 - `G then L`: Go to Labels
+- `G then S`: Go to Settings
 
 ## Task Actions
 - `A`: Add task at end of list (planned)

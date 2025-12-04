@@ -96,6 +96,18 @@ Welcome to Todone! This guide will help you get started and become productive qu
 - **@Mentions**: Type @name in comments (UI ready, full parsing coming soon)
 - **Task Discussions**: Keep all context in one place with task comments
 
+## Settings
+
+- Find settings via sidebar (Settings icon) or shortcut `G then S`
+- Tabs included:
+  - **Account**: Update name, email, password, avatar, danger zone
+  - **Appearance**: Select light/dark/system theme, accent color, display options
+  - **Notifications**: Configure email/push notifications for reminders, mentions, assignments, goals
+  - **General**: Regional preferences (language, date/time formats, start of week), task defaults, data export
+  - **Shortcuts**: Reference of all keyboard shortcuts (customization coming soon)
+- Save buttons confirm changes per section
+- All settings pages follow Todone's dark, modern aesthetic
+
 ## Productivity Features
 
 ### Karma System
