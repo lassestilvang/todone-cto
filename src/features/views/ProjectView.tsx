@@ -7,6 +7,7 @@ import { TaskList } from '@/components/tasks/TaskList';
 import { TaskComposer } from '@/components/tasks/TaskComposer';
 import { Card } from '@/components/ui/Card';
 import { ProjectBoard } from '@/components/projects/ProjectBoard';
+import { CalendarView } from '@/components/calendar';
 import { cn } from '@/lib/utils';
 
 const viewModes = [
@@ -17,7 +18,7 @@ const viewModes = [
 
 export const ProjectView: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
-  const { projects, sections } = useProjectStore();
+  const { projects, sections, updateProject } = useProjectStore();
   const { getTasksByProject } = useTaskStore();
   const [activeViewMode, setActiveViewMode] = useState<'list' | 'board' | 'calendar'>('list');
 
@@ -54,7 +55,13 @@ export const ProjectView: React.FC = () => {
           {viewModes.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setActiveViewMode(id as 'list' | 'board' | 'calendar')}
+              onClick={() => {
+                const mode = id as 'list' | 'board' | 'calendar';
+                setActiveViewMode(mode);
+                if (project && project.viewType !== mode) {
+                  updateProject(project.id, { viewType: mode });
+                }
+              }}
               className={cn(
                 'flex items-center gap-1 rounded-6 border px-3 py-1.5 text-xs transition',
                 activeViewMode === id
@@ -71,14 +78,16 @@ export const ProjectView: React.FC = () => {
 
       <TaskComposer projectId={projectId} placeholder={`Add a task to ${project.name}`} />
 
-      {projectSections.length === 0 ? (
+      {activeViewMode === 'calendar' ? (
+        <CalendarView tasks={projectTasks} />
+      ) : projectSections.length === 0 ? (
         <Card className="text-center text-white/60">
           <Sparkles className="mx-auto mb-3 h-8 w-8 text-brand-400" />
           <p>Create sections to organize tasks in this project.</p>
         </Card>
       ) : (
         <div className="space-y-6">
-          {activeViewMode === 'list' && (
+          {activeViewMode === 'list' &&
             projectSections.map((section) => (
               <div key={section.id} className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -91,18 +100,10 @@ export const ProjectView: React.FC = () => {
                   enableDragDrop
                 />
               </div>
-            ))
-          )}
+            ))}
 
           {activeViewMode === 'board' && (
             <ProjectBoard sections={projectSections} tasks={projectTasks} projectId={projectId!} />
-          )}
-
-          {activeViewMode === 'calendar' && (
-            <Card className="text-center text-white/60">
-              <Sparkles className="mx-auto mb-3 h-8 w-8 text-brand-400" />
-              <p>Calendar view is coming soon!</p>
-            </Card>
           )}
         </div>
       )}
