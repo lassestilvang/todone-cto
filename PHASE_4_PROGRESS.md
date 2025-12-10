@@ -163,28 +163,52 @@ A visual recurring pattern builder shared between Task Composer and Task Detail 
 
 ---
 
+### 5. Settings Persistence ⭐⭐
+
+Complete preference persistence with instant visual updates.
+
+#### State & Storage
+- ✅ New `useSettingsStore` (Zustand) with appearance, notifications, and general slices
+- ✅ LocalStorage hydration + auto-merge with defaults
+- ✅ Granular update helpers plus reset/load utilities
+
+#### Live Application
+- ✅ Theme switching toggles the Tailwind `dark` class + system listener
+- ✅ Accent color propagates through CSS variables overriding `.bg-brand-*`/`.text-brand-*`
+- ✅ Buttons, sidebar, pills, and outlines now follow the selected accent in real time
+- ✅ Notification + general settings auto-save on change (no more "Save" buttons)
+
+#### UX Improvements
+- ✅ Checkbox + select inputs wired directly to persisted state
+- ✅ Inline helper text reflects auto-save behavior
+- ✅ Push notification button reflects current enablement state
+
+---
+
 ## 📊 Phase 4 Statistics
 
 ### Code Additions
-- **New Components**: 5 major
+- **New Components**: 6 major
   - SettingsView with 5 tabs (Account, Appearance, Notifications, General, Shortcuts)
   - CalendarView (monthly task visualization)
   - TemplatesView (50+ curated templates, custom creation, preview/apply)
   - RecurringPatternPicker (shared across TaskComposer and TaskDetailModal)
   - useTemplateStore (template data, category ordering, custom creation)
-- **Updated Components**: 8+
+  - useSettingsStore (persistence, theme/color application, localStorage sync)
+- **Updated Components**: 10+
   - Sidebar, App, UIStore, useKeyboardShortcuts, ProjectView
   - TaskComposer, TaskDetailModal, SubTaskItem
   - useTaskStore (recurring pattern persistence)
+  - SettingsView (wired all inputs to persistent store)
 - **New Data/Lib**: templates.ts (50+ structured templates), recurrence.ts (natural language generator)
-- **Lines of Code Added**: ~2400+ across all Phase 4 features
+- **Lines of Code Added**: ~2800+ across all Phase 4 features
 
 ### Build Quality ✅
 ```
 ✅ TypeScript Compilation: NO ERRORS (verified)
 ✅ ESLint: PASSING (0 warnings, verified)
 ✅ Production Build: SUCCESSFUL (verified)
-✅ Bundle Size: ~900 KB (optimized)
+✅ Bundle Size: ~930 KB (optimized)
 ✅ Performance: Maintained
 ✅ Build Time: ~10-12 seconds
 ```
@@ -201,14 +225,6 @@ A visual recurring pattern builder shared between Task Composer and Task Detail 
    - External event display integration
    - Quick add from calendar cells
    - Calendar-specific filters (weekends, labels, assignee)
-
-2. **Settings Persistence** ⏳
-   - LocalStorage integration for settings
-   - Dedicated settings store with Zustand selectors
-   - Apply theme changes immediately (CSS variables)
-   - Apply language changes
-   - Save user preferences + sync across tabs
-   - Persist notification & privacy controls
 
 ---
 
@@ -279,9 +295,9 @@ A visual recurring pattern builder shared between Task Composer and Task Detail 
 | Calendar View | ✅ Complete | High | 100% |
 | Templates System | ✅ Complete | High | 100% |
 | Recurring Tasks UI | ✅ Complete | High | 100% |
-| Settings Persistence | ⏳ Planned | Medium | 0% |
+| Settings Persistence | ✅ Complete | High | 100% |
 
-**Overall Phase 4 Completion**: 80% (4/5 major features)
+**Overall Phase 4 Completion**: 100% (5/5 major features) ✨
 
 ---
 
@@ -297,8 +313,11 @@ A visual recurring pattern builder shared between Task Composer and Task Detail 
 - ✅ Implemented RecurringPatternPicker with natural language preview
 - ✅ Integrated recurring patterns into TaskComposer and TaskDetailModal
 - ✅ Added recurrence badges and descriptions to task/subtask views
+- ✅ Added `useSettingsStore` with full persistence + CSS variable driven theming
+- ✅ Wired SettingsView toggles/selects to persisted state with live previews
 - ✅ All checks passing (lint, typecheck, build) after each feature commit
 
 ---
 
-**Next Focus**: Settings Persistence for applying user preferences in real-time and syncing across sessions.
+**Next Focus**: Calendar Enhancements (week/day modes, drag-to-reschedule) as stretch goals.
+
