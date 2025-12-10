@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Plus, Hash, AtSign, Clock, Flag } from 'lucide-react';
 import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
+import { RecurringPatternPicker } from '@/components/tasks/RecurringPatternPicker';
 import { useTaskStore } from '@/stores/useTaskStore';
 import { useProjectStore } from '@/stores/useProjectStore';
-import type { Priority } from '@/types';
+import type { Priority, RecurringPattern } from '@/types';
 import { parseQuickTaskInput } from '@/features/tasks/parser';
 
 interface TaskComposerProps {
@@ -28,6 +29,7 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
   const [labels, setLabels] = useState<string[]>([]);
   const [targetProjectId, setTargetProjectId] = useState<string | undefined>(projectId);
   const [dueDate, setDueDate] = useState<Date | undefined>();
+  const [recurringPattern, setRecurringPattern] = useState<RecurringPattern | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { addTask } = useTaskStore();
@@ -39,6 +41,7 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
     setPriority(null);
     setLabels([]);
     setDueDate(undefined);
+    setRecurringPattern(undefined);
     setTargetProjectId(projectId);
   };
 
@@ -72,6 +75,7 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
       priority: parsed.priority ?? priority,
       dueDate: parsed.dueDate ?? dueDate,
       duration: parsed.duration ?? duration,
+      recurringPattern: recurringPattern,
     });
 
     resetState();
@@ -120,6 +124,8 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
           <Flag className="h-3 w-3" />
           Priority {priority ? priority.toUpperCase() : ''}
         </button>
+
+        <RecurringPatternPicker value={recurringPattern} onChange={setRecurringPattern} />
 
         <div className="ml-auto flex items-center gap-2">
           <Button type="button" variant="ghost" size="sm" onClick={resetState}>

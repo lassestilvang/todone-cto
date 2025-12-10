@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ChevronRight, ChevronDown, Calendar, Flag, MoreHorizontal } from 'lucide-react';
+import { ChevronRight, ChevronDown, Calendar, Flag, MoreHorizontal, Repeat } from 'lucide-react';
 import type { Task } from '@/types';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { cn, formatDate, getPriorityColor, isOverdue } from '@/lib/utils';
+import { describeRecurringPattern } from '@/lib/recurrence';
 import { useTaskStore } from '@/stores/useTaskStore';
 import { AddSubTask } from '@/components/tasks/AddSubTask';
 
@@ -77,7 +78,7 @@ export const SubTaskItem: React.FC<SubTaskItemProps> = ({ task, depth = 0, onCli
             )}
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-white/60">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-white/60">
             {task.dueDate && (
               <div
                 className={cn(
@@ -94,6 +95,13 @@ export const SubTaskItem: React.FC<SubTaskItemProps> = ({ task, depth = 0, onCli
               <div className={cn('flex items-center gap-1', getPriorityColor(task.priority))}>
                 <Flag className="h-3 w-3" />
                 <span className="uppercase">{task.priority}</span>
+              </div>
+            )}
+
+            {task.recurringPattern && (
+              <div className="flex items-center gap-1 text-brand-300">
+                <Repeat className="h-3 w-3" />
+                <span>{describeRecurringPattern(task.recurringPattern)}</span>
               </div>
             )}
           </div>

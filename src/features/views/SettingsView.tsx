@@ -1,9 +1,17 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { Settings, User, Bell, Palette, Globe, Calendar, Keyboard } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuthStore } from '@/stores/useAuthStore';
+import {
+  useSettingsStore,
+  type Language,
+  type DateFormat,
+  type TimeFormat,
+  type StartOfWeek,
+  type DefaultView,
+} from '@/stores/useSettingsStore';
 
 type SettingsTab = 'account' | 'appearance' | 'notifications' | 'general' | 'shortcuts';
 
@@ -141,8 +149,8 @@ const AccountSettings: React.FC = () => {
 };
 
 const AppearanceSettings: React.FC = () => {
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark');
-  const [accentColor, setAccentColor] = useState('#10b981');
+  const { appearance, updateAppearance } = useSettingsStore();
+  const { theme, accentColor, compactMode, showCompletedTasks } = appearance;
 
   const themes = [
     { value: 'light' as const, label: 'Light', description: 'Bright and clean' },
@@ -173,7 +181,7 @@ const AppearanceSettings: React.FC = () => {
             {themes.map((themeOption) => (
               <button
                 key={themeOption.value}
-                onClick={() => setTheme(themeOption.value)}
+                onClick={() => updateAppearance({ theme: themeOption.value })}
                 className={`rounded-8 border p-4 text-left transition ${
                   theme === themeOption.value
                     ? 'border-brand-500 bg-brand-500/10'
@@ -195,7 +203,7 @@ const AppearanceSettings: React.FC = () => {
             {accentColors.map((colorOption) => (
               <button
                 key={colorOption.color}
-                onClick={() => setAccentColor(colorOption.color)}
+                onClick={() => updateAppearance({ accentColor: colorOption.color })}
                 className={`rounded-6 p-4 transition ${
                   accentColor === colorOption.color
                     ? 'ring-2 ring-white/80 ring-offset-2 ring-offset-slate-900'
@@ -208,7 +216,7 @@ const AppearanceSettings: React.FC = () => {
             ))}
           </div>
           <p className="text-xs text-white/50">
-            Currently using: {accentColors.find((c) => c.color === accentColor)?.name}
+            Currently using: {accentColors.find((c) => c.color === accentColor)?.name || 'Custom'}
           </p>
         </div>
       </Card>
@@ -222,7 +230,12 @@ const AppearanceSettings: React.FC = () => {
               <p className="text-sm text-white">Compact mode</p>
               <p className="text-xs text-white/50">Reduce spacing throughout the app</p>
             </div>
-            <input type="checkbox" className="rounded" />
+            <input
+              type="checkbox"
+              checked={compactMode}
+              onChange={(e) => updateAppearance({ compactMode: e.target.checked })}
+              className="rounded"
+            />
           </div>
 
           <div className="flex items-center justify-between">
@@ -230,12 +243,17 @@ const AppearanceSettings: React.FC = () => {
               <p className="text-sm text-white">Show completed tasks</p>
               <p className="text-xs text-white/50">Display completed tasks in lists</p>
             </div>
-            <input type="checkbox" defaultChecked className="rounded" />
+            <input
+              type="checkbox"
+              checked={showCompletedTasks}
+              onChange={(e) => updateAppearance({ showCompletedTasks: e.target.checked })}
+              className="rounded"
+            />
           </div>
 
-          <div className="border-t border-white/10 pt-4">
-            <Button>Save Changes</Button>
-          </div>
+          <p className="text-xs text-white/50 italic">
+            Settings are automatically saved
+          </p>
         </div>
       </Card>
     </div>
@@ -243,6 +261,18 @@ const AppearanceSettings: React.FC = () => {
 };
 
 const NotificationSettings: React.FC = () => {
+  const { notifications, updateNotifications } = useSettingsStore();
+  const { emailNotifications, pushNotificationsEnabled } = notifications;
+
+  const handleEmailToggle = (key: keyof typeof emailNotifications) => (event: ChangeEvent<HTMLInputElement>) => {
+    updateNotifications({
+      emailNotifications: {
+        ...emailNotifications,
+        [key]: event.target.checked,
+      },
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -260,7 +290,12 @@ const NotificationSettings: React.FC = () => {
                 <p className="text-sm text-white">Task reminders</p>
                 <p className="text-xs text-white/50">Get reminded about upcoming tasks</p>
               </div>
-              <input type="checkbox" defaultChecked className="rounded" />
+              <input
+                type="checkbox"
+                checked={emailNotifications.taskReminders}
+                onChange={handleEmailToggle('taskReminders')}
+                className="rounded"
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -268,7 +303,12 @@ const NotificationSettings: React.FC = () => {
                 <p className="text-sm text-white">Comments and mentions</p>
                 <p className="text-xs text-white/50">When someone comments or mentions you</p>
               </div>
-              <input type="checkbox" defaultChecked className="rounded" />
+              <input
+                type="checkbox"
+                checked={emailNotifications.commentsAndMentions}
+                onChange={handleEmailToggle('commentsAndMentions')}
+                className="rounded"
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -276,7 +316,12 @@ const NotificationSettings: React.FC = () => {
                 <p className="text-sm text-white">Task assignments</p>
                 <p className="text-xs text-white/50">When a task is assigned to you</p>
               </div>
-              <input type="checkbox" defaultChecked className="rounded" />
+              <input
+                type="checkbox"
+                checked={emailNotifications.taskAssignments}
+                onChange={handleEmailToggle('taskAssignments')}
+                className="rounded"
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -284,7 +329,12 @@ const NotificationSettings: React.FC = () => {
                 <p className="text-sm text-white">Daily summary</p>
                 <p className="text-xs text-white/50">Daily digest of your tasks</p>
               </div>
-              <input type="checkbox" className="rounded" />
+              <input
+                type="checkbox"
+                checked={emailNotifications.dailySummary}
+                onChange={handleEmailToggle('dailySummary')}
+                className="rounded"
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -292,7 +342,12 @@ const NotificationSettings: React.FC = () => {
                 <p className="text-sm text-white">Overdue tasks</p>
                 <p className="text-xs text-white/50">Get notified about overdue tasks</p>
               </div>
-              <input type="checkbox" defaultChecked className="rounded" />
+              <input
+                type="checkbox"
+                checked={emailNotifications.overdueTasks}
+                onChange={handleEmailToggle('overdueTasks')}
+                className="rounded"
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -300,13 +355,16 @@ const NotificationSettings: React.FC = () => {
                 <p className="text-sm text-white">Goal achievements</p>
                 <p className="text-xs text-white/50">Celebrate when you hit your goals</p>
               </div>
-              <input type="checkbox" defaultChecked className="rounded" />
+              <input
+                type="checkbox"
+                checked={emailNotifications.goalAchievements}
+                onChange={handleEmailToggle('goalAchievements')}
+                className="rounded"
+              />
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-4">
-            <Button>Save Preferences</Button>
-          </div>
+          <p className="text-xs text-white/50 italic">Email settings sync automatically</p>
         </div>
       </Card>
 
@@ -316,7 +374,12 @@ const NotificationSettings: React.FC = () => {
           <p className="text-sm text-white/60">
             Enable browser notifications to get real-time updates
           </p>
-          <Button variant="secondary">Enable Push Notifications</Button>
+          <Button
+            variant={pushNotificationsEnabled ? 'ghost' : 'secondary'}
+            onClick={() => updateNotifications({ pushNotificationsEnabled: !pushNotificationsEnabled })}
+          >
+            {pushNotificationsEnabled ? 'Disable Push Notifications' : 'Enable Push Notifications'}
+          </Button>
         </div>
       </Card>
     </div>
@@ -324,10 +387,8 @@ const NotificationSettings: React.FC = () => {
 };
 
 const GeneralSettings: React.FC = () => {
-  const [language, setLanguage] = useState('en');
-  const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
-  const [timeFormat, setTimeFormat] = useState('12h');
-  const [startOfWeek, setStartOfWeek] = useState('sunday');
+  const { general, updateGeneralSettings } = useSettingsStore();
+  const { language, dateFormat, timeFormat, startOfWeek, defaultView, autoAddTime, showWeekends } = general;
 
   return (
     <div className="space-y-6">
@@ -344,7 +405,7 @@ const GeneralSettings: React.FC = () => {
             <label className="text-sm font-medium text-white">Language</label>
             <select
               value={language}
-              onChange={(e) => setLanguage(e.target.value)}
+              onChange={(e) => updateGeneralSettings({ language: e.target.value as Language })}
               className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-white"
             >
               <option value="en">English</option>
@@ -363,7 +424,7 @@ const GeneralSettings: React.FC = () => {
             <label className="text-sm font-medium text-white">Date Format</label>
             <select
               value={dateFormat}
-              onChange={(e) => setDateFormat(e.target.value)}
+              onChange={(e) => updateGeneralSettings({ dateFormat: e.target.value as DateFormat })}
               className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-white"
             >
               <option value="MM/DD/YYYY">MM/DD/YYYY (12/31/2024)</option>
@@ -376,7 +437,7 @@ const GeneralSettings: React.FC = () => {
             <label className="text-sm font-medium text-white">Time Format</label>
             <select
               value={timeFormat}
-              onChange={(e) => setTimeFormat(e.target.value)}
+              onChange={(e) => updateGeneralSettings({ timeFormat: e.target.value as TimeFormat })}
               className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-white"
             >
               <option value="12h">12-hour (3:00 PM)</option>
@@ -388,7 +449,7 @@ const GeneralSettings: React.FC = () => {
             <label className="text-sm font-medium text-white">Start of week</label>
             <select
               value={startOfWeek}
-              onChange={(e) => setStartOfWeek(e.target.value)}
+              onChange={(e) => updateGeneralSettings({ startOfWeek: e.target.value as StartOfWeek })}
               className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-white"
             >
               <option value="sunday">Sunday</option>
@@ -404,7 +465,11 @@ const GeneralSettings: React.FC = () => {
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-white">Default view on launch</label>
-            <select className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-white">
+            <select
+              value={defaultView}
+              onChange={(e) => updateGeneralSettings({ defaultView: e.target.value as DefaultView })}
+              className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-white"
+            >
               <option value="today">Today</option>
               <option value="inbox">Inbox</option>
               <option value="upcoming">Upcoming</option>
@@ -416,7 +481,12 @@ const GeneralSettings: React.FC = () => {
               <p className="text-sm text-white">Auto-add time to tasks</p>
               <p className="text-xs text-white/50">Automatically suggest time when adding tasks</p>
             </div>
-            <input type="checkbox" className="rounded" />
+            <input
+              type="checkbox"
+              checked={autoAddTime}
+              onChange={(e) => updateGeneralSettings({ autoAddTime: e.target.checked })}
+              className="rounded"
+            />
           </div>
 
           <div className="flex items-center justify-between">
@@ -424,12 +494,15 @@ const GeneralSettings: React.FC = () => {
               <p className="text-sm text-white">Show weekends</p>
               <p className="text-xs text-white/50">Display weekends in Upcoming view</p>
             </div>
-            <input type="checkbox" defaultChecked className="rounded" />
+            <input
+              type="checkbox"
+              checked={showWeekends}
+              onChange={(e) => updateGeneralSettings({ showWeekends: e.target.checked })}
+              className="rounded"
+            />
           </div>
 
-          <div className="border-t border-white/10 pt-4">
-            <Button>Save Settings</Button>
-          </div>
+          <p className="text-xs text-white/50 italic">All preferences saved automatically</p>
         </div>
       </Card>
 

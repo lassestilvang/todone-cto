@@ -50,7 +50,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       assigneeId: input.assigneeId,
       parentTaskId: input.parentTaskId,
       description: input.description,
-      order: projectTasks.length,
+      order: input.order ?? projectTasks.length,
       completed: false,
       userId: existingTasks[0]?.userId ?? 'demo-user',
       createdAt: new Date(),
