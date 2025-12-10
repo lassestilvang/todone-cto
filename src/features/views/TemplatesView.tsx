@@ -3,22 +3,37 @@ import { useTemplateStore } from '@/stores/useTemplateStore';
 import { useProjectStore } from '@/stores/useProjectStore';
 import { useTaskStore } from '@/stores/useTaskStore';
 import { useNavigate } from 'react-router-dom';
-import { Search, X, Check, Sparkles } from 'lucide-react';
+import { Search, X, Check, Sparkles, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Modal } from '@/components/ui/Modal';
 import type { Template } from '@/types';
+
+const DEFAULT_TEMPLATE_CATEGORIES = ['Work', 'Personal', 'Education', 'Management', 'Marketing & Sales', 'Customer Support'];
 
 export const TemplatesView: React.FC = () => {
   const navigate = useNavigate();
-  const { templates, getCategories } = useTemplateStore();
-  const { addProject, addSection } = useProjectStore();
-  const { addTask } = useTaskStore();
+  const { templates, getCategories, addCustomTemplate } = useTemplateStore();
+  const { projects, sections, addProject, addSection } = useProjectStore();
+  const { tasks, addTask } = useTaskStore();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [isApplying, setIsApplying] = useState(false);
+  
+  // Custom template creation state
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [customName, setCustomName] = useState('');
+  const [customDescription, setCustomDescription] = useState('');
+  const [customCategory, setCustomCategory] = useState(DEFAULT_TEMPLATE_CATEGORIES[0]);
+  const [selectedProjectId, setSelectedProjectId] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const categories = getCategories();
+  const categoryOptions = Array.from(new Set([...DEFAULT_TEMPLATE_CATEGORIES, ...categories]));
   const allCategories = ['all', ...categories];
 
   const filteredTemplates = templates.filter((template) => {
@@ -27,6 +42,95 @@ export const TemplatesView: React.FC = () => {
     const matchesCategory = selectedCategory === 'all' || template.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const getDefaultCategory = () => categoryOptions[0] ?? DEFAULT_TEMPLATE_CATEGORIES[0];
+  const getDefaultProjectId = () => projects[0]?.id ?? '';
+
+  const resetCreateForm = () => {
+    setCustomName('');
+    setCustomDescription('');
+    setCustomCategory(getDefaultCategory());
+    setSelectedProjectId(getDefaultProjectId());
+    setFormError(null);
+  };
+
+  const handleOpenCreateModal = () => {
+    if (!projects.length) return;
+    resetCreateForm();
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCloseCreateModal = () => {
+    if (isSaving) return;
+    resetCreateForm();
+    setIsCreateModalOpen(false);
+  };
+
+  const handleCreateTemplate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!customName.trim()) {
+      setFormError('Please provide a template name.');
+      return;
+    }
+    if (!selectedProjectId) {
+      setFormError('Please choose a project to base this template on.');
+      return;
+    }
+
+    const sourceProject = projects.find((project) => project.id === selectedProjectId);
+    if (!sourceProject) {
+      setFormError('Selected project could not be found.');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const projectSections = sections
+        .filter((section) => section.projectId === sourceProject.id)
+        .sort((a, b) => a.order - b.order);
+      const sectionIndexMap = new Map<string, number>();
+      const templateSections = projectSections.map((section, index) => {
+        sectionIndexMap.set(section.id, index);
+        return { name: section.name, order: index };
+      });
+
+      const projectTasks = tasks
+        .filter((task) => task.projectId === sourceProject.id && !task.parentTaskId)
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        .map((task, index) => ({
+          content: task.content,
+          description: task.description,
+          sectionIndex: task.sectionId ? sectionIndexMap.get(task.sectionId) : undefined,
+          priority: task.priority ?? undefined,
+          labels: task.labels.length ? task.labels : undefined,
+          order: index,
+        }));
+
+      const structure = {
+        projectName: sourceProject.name,
+        projectColor: sourceProject.color,
+        sections: templateSections,
+        tasks: projectTasks,
+      };
+
+      const newTemplate = addCustomTemplate(
+        customName.trim(),
+        customDescription.trim() || `Template created from ${sourceProject.name}`,
+        customCategory,
+        structure,
+      );
+
+      setSelectedCategory('all');
+      setSelectedTemplate(newTemplate);
+      setIsCreateModalOpen(false);
+      resetCreateForm();
+    } catch (error) {
+      console.error('Failed to create template:', error);
+      setFormError('Unable to create template. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleApplyTemplate = async (template: Template) => {
     setIsApplying(true);
@@ -76,9 +180,22 @@ export const TemplatesView: React.FC = () => {
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="border-b border-white/10 p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Sparkles className="h-6 w-6 text-brand-400" />
-          <h1 className="text-2xl font-bold text-white">Project Templates</h1>
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-6 w-6 text-brand-400" />
+            <h1 className="text-2xl font-bold text-white">Project Templates</h1>
+          </div>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="ml-auto flex items-center gap-2"
+            onClick={handleOpenCreateModal}
+            disabled={!projects.length}
+          >
+            <Plus className="h-4 w-4" />
+            Create template
+          </Button>
         </div>
         <p className="text-white/60">
           Get started quickly with 50+ pre-built project templates across multiple categories
@@ -267,6 +384,94 @@ export const TemplatesView: React.FC = () => {
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+        title="Create custom template"
+        className="max-w-xl"
+      >
+        {projects.length === 0 ? (
+          <p className="text-sm text-white/70">
+            You need at least one project before you can create a custom template.
+          </p>
+        ) : (
+          <form className="space-y-4" onSubmit={handleCreateTemplate}>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white">Template name</label>
+              <Input
+                placeholder="Quarterly planning"
+                value={customName}
+                error={formError?.includes('name') ? formError : undefined}
+                onChange={(event) => {
+                  setCustomName(event.target.value);
+                  if (formError?.includes('name')) setFormError(null);
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white">Description</label>
+              <Textarea
+                placeholder="Describe what this template is best used for"
+                rows={3}
+                value={customDescription}
+                onChange={(event) => setCustomDescription(event.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white">Category</label>
+              <select
+                value={customCategory}
+                onChange={(event) => setCustomCategory(event.target.value)}
+                className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white focus:border-brand-500 focus:outline-none"
+              >
+                {categoryOptions.map((category) => (
+                  <option key={category} value={category} className="bg-slate-900 text-white">
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white">Project to copy</label>
+              <select
+                value={selectedProjectId}
+                onChange={(event) => setSelectedProjectId(event.target.value)}
+                className="w-full rounded-6 border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white focus:border-brand-500 focus:outline-none"
+              >
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id} className="bg-slate-900 text-white">
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-white/50">
+                We will capture the project's sections and top-level tasks as part of the template.
+              </p>
+            </div>
+
+            {formError && !(formError?.includes('name')) && (
+              <p className="text-sm text-red-400">{formError}</p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-2">
+              <Button type="button" variant="ghost" onClick={handleCloseCreateModal} disabled={isSaving}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={!customName.trim() || !selectedProjectId}
+                loading={isSaving}
+              >
+                Save template
+              </Button>
+            </div>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 };
