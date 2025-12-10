@@ -1,4 +1,4 @@
-import { Inbox, Calendar, ChevronRight, Plus, ChevronDown, Tags, Filter, TrendingUp, Settings as SettingsIcon } from 'lucide-react';
+import { Inbox, Calendar, ChevronRight, Plus, ChevronDown, Tags, Filter, TrendingUp, Settings as SettingsIcon, Sparkles } from 'lucide-react';
 import { CreateProjectModal } from '@/components/projects/CreateProjectModal';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,7 @@ export const Sidebar: React.FC = () => {
   const [isProjectsExpanded, setIsProjectsExpanded] = useState(true);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
 
-  const handleViewChange = (view: 'inbox' | 'today' | 'upcoming' | 'filters' | 'labels' | 'productivity' | 'settings') => {
+  const handleViewChange = (view: 'inbox' | 'today' | 'upcoming' | 'filters' | 'labels' | 'productivity' | 'settings' | 'templates') => {
     setActiveView(view);
     setSelectedProjectId(null);
     navigate(`/${view}`);
@@ -92,6 +92,19 @@ export const Sidebar: React.FC = () => {
           >
             <TrendingUp className="h-4 w-4" />
             <span>Productivity</span>
+          </button>
+
+          <button
+            onClick={() => handleViewChange('templates')}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-6 px-3 py-2 text-sm transition',
+              activeView === 'templates'
+                ? 'bg-brand-500/20 text-brand-300'
+                : 'text-white/70 hover:bg-white/5 hover:text-white',
+            )}
+          >
+            <Sparkles className="h-4 w-4" />
+            <span>Templates</span>
           </button>
 
           <button
