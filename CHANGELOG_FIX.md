@@ -40,10 +40,16 @@ Fixed critical Dexie schema errors, eliminated bcryptjs crypto warning, and reso
 - Migration notes for users
 - Testing verification
 
+### 7. Console Error Summary (`CONSOLE_ERRORS_FIXED.md`) [NEW FILE]
+- Captures original console errors and applied fixes
+- Includes testing summary and migration guidance
+- Serves as quick reference for QA/devs
+
 ## Files Modified
 - `src/lib/database.ts` - Added schema v2 with indexes
 - `src/lib/auth.ts` - Refactored bcrypt usage
 - `vite.config.ts` - Added crypto alias
+- `src/components/ui/Checkbox.tsx` - Ensures onChange handler always present
 - `src/components/tasks/TaskItem.tsx` - Added onChange handler to Checkbox
 - `src/components/tasks/SubTaskItem.tsx` - Added onChange handler to Checkbox
 - `package.json` - Updated bcryptjs from 2.4.3 to 3.0.3, @types/bcryptjs to 2.4.6
@@ -53,6 +59,7 @@ Fixed critical Dexie schema errors, eliminated bcryptjs crypto warning, and reso
 - `src/shims/crypto.ts` - Browser crypto shim
 - `FIXES.md` - Detailed fix documentation
 - `CHANGELOG_FIX.md` - This file
+- `CONSOLE_ERRORS_FIXED.md` - Before/after console error summary
 
 ## Testing Results
 ✅ All checks pass:
