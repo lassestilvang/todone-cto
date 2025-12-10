@@ -20,13 +20,17 @@ export const SubTaskItem: React.FC<SubTaskItemProps> = ({ task, depth = 0, onCli
   const subTasks = tasks.filter((t) => t.parentTaskId === task.id);
   const hasSubTasks = subTasks.length > 0;
 
-  const handleCheck = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCheck = () => {
     if (task.completed) {
       uncompleteTask(task.id);
     } else {
       completeTask(task.id);
     }
+  };
+
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleCheck();
   };
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -62,8 +66,8 @@ export const SubTaskItem: React.FC<SubTaskItemProps> = ({ task, depth = 0, onCli
 
         {!hasSubTasks && depth > 0 && <div className="w-4" />}
 
-        <div onClick={handleCheck} className="cursor-pointer pt-0.5">
-          <Checkbox checked={task.completed} />
+        <div onClick={handleCheckboxClick} className="cursor-pointer pt-0.5">
+          <Checkbox checked={task.completed} onChange={handleCheck} />
         </div>
 
         <div className="flex-1 space-y-1">

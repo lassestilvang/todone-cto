@@ -1,7 +1,7 @@
 # Fix: Dexie KeyPath Indexes and bcryptjs Crypto Warning
 
 ## Summary
-Fixed critical Dexie schema errors and eliminated bcryptjs crypto warning in browser console when running `npm run dev`.
+Fixed critical Dexie schema errors, eliminated bcryptjs crypto warning, and resolved React checkbox warnings in browser console when running `npm run dev`.
 
 ## Changes Made
 
@@ -30,7 +30,12 @@ Fixed critical Dexie schema errors and eliminated bcryptjs crypto warning in bro
 - Maintains all existing functionality
 - No breaking changes to API
 
-### 5. Documentation (`FIXES.md`) [NEW FILE]
+### 5. Checkbox Warnings (`TaskItem.tsx`, `SubTaskItem.tsx`)
+- Added `onChange` handlers to checkbox components
+- Stopped propagation on wrapper divs to preserve original UX
+- Removed React warnings about read-only checkboxes
+
+### 6. Documentation (`FIXES.md`) [NEW FILE]
 - Detailed explanation of issues and solutions
 - Migration notes for users
 - Testing verification
@@ -39,7 +44,9 @@ Fixed critical Dexie schema errors and eliminated bcryptjs crypto warning in bro
 - `src/lib/database.ts` - Added schema v2 with indexes
 - `src/lib/auth.ts` - Refactored bcrypt usage
 - `vite.config.ts` - Added crypto alias
-- `package.json` - Re-installed bcryptjs (no version change)
+- `src/components/tasks/TaskItem.tsx` - Added onChange handler to Checkbox
+- `src/components/tasks/SubTaskItem.tsx` - Added onChange handler to Checkbox
+- `package.json` - Updated bcryptjs from 2.4.3 to 3.0.3, @types/bcryptjs to 2.4.6
 - `package-lock.json` - Updated from package.json changes
 
 ## Files Added
@@ -54,9 +61,9 @@ Fixed critical Dexie schema errors and eliminated bcryptjs crypto warning in bro
 - Build: `npm run build` - Success (936.98 KB)
 
 ## Impact
-- **Before**: 6+ console errors blocking app functionality
-- **After**: Clean console (except for informational React Router warnings)
-- **Performance**: No impact, bundle size increased ~20KB (crypto shim)
+- **Before**: 6+ console errors blocking app functionality + React checkbox warnings
+- **After**: Clean console (only informational React Router warnings remain)
+- **Performance**: No impact, bundle size increased ~20KB (crypto shim, bcryptjs update)
 - **Breaking Changes**: None - fully backward compatible
 
 ## Migration Guide

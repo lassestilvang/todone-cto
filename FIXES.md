@@ -33,6 +33,11 @@ Cannot access "crypto.randomBytes" in client code.
 - Eliminates the warning completely
 - Maintains compatibility with existing password hashes
 
+### 3. React Checkbox Warning
+**Problem**: React warned that a `checked` prop was provided without an `onChange` handler, rendering checkbox inputs read-only.
+
+**Solution**: Added proper `onChange` handlers and click interception logic in `TaskItem` and `SubTaskItem` so checkboxes remain controllable without triggering parent click handlers.
+
 ## Testing
 
 All quality checks pass:
