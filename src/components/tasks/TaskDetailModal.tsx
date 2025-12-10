@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { X, Calendar, Flag, Tag, MessageSquare, Trash2, Edit2 } from 'lucide-react';
+import { X, Calendar, Flag, Tag, MessageSquare, Trash2, Edit2, Repeat } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
-import type { Task } from '@/types';
+import { RecurringPatternPicker } from '@/components/tasks/RecurringPatternPicker';
+import type { Task, RecurringPattern } from '@/types';
 import { useTaskStore } from '@/stores/useTaskStore';
 import { useCommentStore } from '@/stores/useCommentStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { formatDate, getPriorityColor } from '@/lib/utils';
+import { describeRecurringPattern } from '@/lib/recurrence';
 import { format } from 'date-fns';
 
 interface TaskDetailModalProps {
@@ -24,11 +26,13 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({ task, isOpen, 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingDescription, setEditingDescription] = useState(false);
   const [description, setDescription] = useState('');
+  const [recurringPattern, setRecurringPattern] = useState<RecurringPattern | undefined>();
 
   useEffect(() => {
     if (task) {
       loadComments(task.id);
       setDescription(task.description || '');
+      setRecurringPattern(task.recurringPattern);
     }
   }, [task, loadComments]);
 
@@ -52,6 +56,11 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({ task, isOpen, 
   const handleSaveDescription = async () => {
     await updateTask(task.id, { description: description.trim() || undefined });
     setEditingDescription(false);
+  };
+
+  const handleRecurringChange = async (pattern: RecurringPattern | undefined) => {
+    setRecurringPattern(pattern);
+    await updateTask(task.id, { recurringPattern: pattern });
   };
 
   const handleDelete = async () => {
@@ -110,6 +119,32 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({ task, isOpen, 
               <span className="text-white/80">{task.labels.join(', ')}</span>
             </div>
           )}
+
+          {task.recurringPattern && (
+            <div className="flex items-center gap-2 rounded-6 border border-brand-500/30 bg-brand-500/10 px-3 py-1.5 text-brand-200">
+              <Repeat className="h-4 w-4" />
+              <span>{describeRecurringPattern(task.recurringPattern)}</span>
+            </div>
+          )}
+          </div>
+
+        {/* Recurring Pattern Editor */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-white">Recurring Pattern</h3>
+            {recurringPattern && (
+              <button
+                onClick={() => handleRecurringChange(undefined)}
+                className="text-xs text-white/60 hover:text-white"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          <RecurringPatternPicker value={recurringPattern} onChange={handleRecurringChange} />
+          <p className="text-xs text-white/50">
+            {recurringPattern ? describeRecurringPattern(recurringPattern) : 'Not repeating'}
+          </p>
         </div>
 
         {/* Description */}
