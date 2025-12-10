@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // Provide crypto shim for bcryptjs to prevent warning about Node.js crypto module
+      crypto: path.resolve(__dirname, './src/shims/crypto.ts'),
     },
   },
   server: {

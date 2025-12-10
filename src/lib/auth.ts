@@ -11,6 +11,12 @@ export interface AuthToken {
   expiresAt: number;
 }
 
+const BCRYPT_ROUNDS = 10;
+
+const hashPassword = (password: string): Promise<string> => bcrypt.hash(password, BCRYPT_ROUNDS);
+
+const verifyPassword = (password: string, hash: string): Promise<boolean> => bcrypt.compare(password, hash);
+
 export const generateToken = (userId: string): AuthToken => {
   const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
   const token = btoa(JSON.stringify({ userId, timestamp: Date.now() }));
@@ -67,7 +73,7 @@ export const register = async (
     throw new Error('User already exists');
   }
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await hashPassword(password);
 
   const user: User = {
     id: crypto.randomUUID(),
@@ -129,7 +135,7 @@ export const login = async (email: string, password: string): Promise<User> => {
   }
 
   if (user.passwordHash) {
-    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+    const isValidPassword = await verifyPassword(password, user.passwordHash);
     if (!isValidPassword) {
       throw new Error('Invalid email or password');
     }

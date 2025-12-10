@@ -15,13 +15,17 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onClick, draggable = f
   const { completeTask, uncompleteTask } = useTaskStore();
   const { openTaskDetail } = useUIStore();
 
-  const handleCheck = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCheck = () => {
     if (task.completed) {
       uncompleteTask(task.id);
     } else {
       completeTask(task.id);
     }
+  };
+
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleCheck();
   };
 
   const handleClick = () => {
@@ -48,8 +52,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, onClick, draggable = f
         </button>
       )}
 
-      <div onClick={handleCheck} className="cursor-pointer pt-0.5">
-        <Checkbox checked={task.completed} />
+      <div onClick={handleCheckboxClick} className="cursor-pointer pt-0.5">
+        <Checkbox checked={task.completed} onChange={handleCheck} />
       </div>
 
       <div className="flex-1 space-y-1">

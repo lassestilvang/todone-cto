@@ -42,6 +42,21 @@ export class TodoneDatabase extends Dexie {
       activityLog: '&id, userId, entityType, entityId',
       syncQueue: '&id, entityType, action, synced',
     });
+
+    this.version(2).stores({
+      users: '&id, email',
+      projects: '&id, userId, favorite, parentProjectId, order',
+      sections: '&id, projectId, order',
+      tasks:
+        '&id, projectId, sectionId, parentTaskId, userId, completed, dueDate, priority, labels, order',
+      labels: '&id, userId, name',
+      filters: '&id, userId, favorite, name',
+      comments: '&id, taskId, userId',
+      attachments: '&id, taskId',
+      templates: '&id, userId, category',
+      activityLog: '&id, userId, entityType, entityId',
+      syncQueue: '&id, entityType, action, synced',
+    });
   }
 }
 
