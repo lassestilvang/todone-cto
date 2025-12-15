@@ -7,7 +7,9 @@ interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, checked, indeterminate, ...props }, ref) => {
+  ({ className, checked, indeterminate, onChange, ...props }, ref) => {
+    const handleChange: React.ChangeEventHandler<HTMLInputElement> = onChange ?? (() => undefined);
+
     return (
       <div className="relative inline-flex items-center">
         <input
@@ -15,6 +17,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           type="checkbox"
           className="peer sr-only"
           checked={checked}
+          onChange={handleChange}
           {...props}
         />
         <div
