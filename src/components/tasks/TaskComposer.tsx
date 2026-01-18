@@ -51,35 +51,41 @@ export const TaskComposer: React.FC<TaskComposerProps> = ({
 
     setIsProcessing(true);
 
-    const parsed = parseQuickTaskInput(value);
-    const normalizedProjectName = parsed.projectName
-      ?.replace(/[^a-z0-9]/gi, '')
-      .toLowerCase();
-    const matchedProject = normalizedProjectName
-      ? projects.find(
-          (project) =>
-            project.name
-              .replace(/[^a-z0-9]/gi, '')
-              .toLowerCase() === normalizedProjectName,
-        )
-      : undefined;
+    try {
+      const parsed = parseQuickTaskInput(value);
+      const normalizedProjectName = parsed.projectName
+        ?.replace(/[^a-z0-9]/gi, '')
+        .toLowerCase();
+      const matchedProject = normalizedProjectName
+        ? projects.find(
+            (project) =>
+              project.name
+                .replace(/[^a-z0-9]/gi, '')
+                .toLowerCase() === normalizedProjectName,
+          )
+        : undefined;
 
-    const resolvedProjectId = matchedProject?.id ?? projectId ?? targetProjectId;
+      const resolvedProjectId = matchedProject?.id ?? projectId ?? targetProjectId;
 
-    await addTask({
-      content: parsed.content,
-      description: parsed.description,
-      projectId: resolvedProjectId,
-      sectionId,
-      labels: parsed.labels.length ? parsed.labels : labels,
-      priority: parsed.priority ?? priority,
-      dueDate: parsed.dueDate ?? dueDate,
-      duration: parsed.duration ?? duration,
-      recurringPattern: recurringPattern,
-    });
+      await addTask({
+        content: parsed.content,
+        description: parsed.description,
+        projectId: resolvedProjectId,
+        sectionId,
+        labels: parsed.labels.length ? parsed.labels : labels,
+        priority: parsed.priority ?? priority,
+        dueDate: parsed.dueDate ?? dueDate,
+        duration: parsed.duration ?? duration,
+        recurringPattern: recurringPattern,
+      });
 
-    resetState();
-    setIsProcessing(false);
+      resetState();
+    } catch (error) {
+      console.error('Failed to add task:', error);
+      alert(`Failed to add task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
