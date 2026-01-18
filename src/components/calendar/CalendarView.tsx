@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, CalendarDays, CalendarRange } from 'lucide-react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, CalendarDays, CalendarRange, Plus } from 'lucide-react';
 import {
   startOfMonth,
   endOfMonth,
@@ -36,6 +36,7 @@ import type { Task } from '@/types';
 
 interface CalendarViewProps {
   tasks: Task[];
+  projectId?: string;
   onDayClick?: (date: Date) => void;
 }
 
@@ -52,6 +53,7 @@ interface DroppableDayProps {
   isToday: boolean;
   viewMode: ViewMode;
   onDayClick?: (date: Date) => void;
+  onQuickAdd?: (content: string, date: Date) => void;
 }
 
 // Draggable task card component - memoized for performance
@@ -87,41 +89,63 @@ const DraggableTaskCard: React.FC<DraggableTaskCardProps> = ({ task }) => {
 };
 
 // Droppable day cell component - memoized for performance
-const DroppableDay: React.FC<DroppableDayProps> = ({ date, tasks, isCurrentPeriod, isToday, viewMode, onDayClick }) => {
+const DroppableDay: React.FC<DroppableDayProps> = ({ date, tasks, isCurrentPeriod, isToday, viewMode, onDayClick, onQuickAdd }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: date.toISOString(),
     data: { date },
   });
 
   const maxTasksToShow = viewMode === 'day' ? 20 : viewMode === 'week' ? 5 : 3;
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [quickAddInput, setQuickAddInput] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (showQuickAdd && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showQuickAdd]);
+
+  const handleQuickAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (quickAddInput.trim() && onQuickAdd) {
+      onQuickAdd(quickAddInput.trim(), date);
+      setQuickAddInput('');
+      setShowQuickAdd(false);
+    }
+  };
 
   return (
-    <button
-      type="button"
-      onClick={() => onDayClick?.(date)}
+    <div
       ref={setNodeRef}
       className={cn(
-        'min-h-[80px] rounded-6 border p-2 text-left transition',
+        'min-h-[80px] rounded-6 border p-2 transition',
         'hover:border-white/20 hover:bg-white/5',
         isCurrentPeriod ? 'border-white/10' : 'border-white/5 opacity-40',
         isToday && 'border-brand-500 bg-brand-500/10',
         isOver && 'border-brand-400 bg-brand-400/20'
       )}
     >
-      <div className="flex items-center justify-between mb-1">
-        <span
-          className={cn(
-            'text-sm font-medium',
-            isToday ? 'text-brand-400' : 'text-white',
-            !isCurrentPeriod && 'text-white/40'
+      <button
+        type="button"
+        onClick={() => onDayClick?.(date)}
+        className="w-full text-left mb-1"
+      >
+        <div className="flex items-center justify-between">
+          <span
+            className={cn(
+              'text-sm font-medium',
+              isToday ? 'text-brand-400' : 'text-white',
+              !isCurrentPeriod && 'text-white/40'
+            )}
+          >
+            {viewMode === 'day' ? format(date, 'EEEE, MMMM d') : format(date, 'd')}
+          </span>
+          {tasks.length > 0 && (
+            <span className="text-xs text-white/60">{tasks.length}</span>
           )}
-        >
-          {viewMode === 'day' ? format(date, 'EEEE, MMMM d') : format(date, 'd')}
-        </span>
-        {tasks.length > 0 && (
-          <span className="text-xs text-white/60">{tasks.length}</span>
-        )}
-      </div>
+        </div>
+      </button>
 
       <div className="space-y-1">
         {tasks.slice(0, maxTasksToShow).map((task) => (
@@ -132,16 +156,59 @@ const DroppableDay: React.FC<DroppableDayProps> = ({ date, tasks, isCurrentPerio
             +{tasks.length - maxTasksToShow} more
           </div>
         )}
+
+        {showQuickAdd ? (
+          <form onSubmit={handleQuickAdd} className="mt-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={quickAddInput}
+              onChange={(e) => setQuickAddInput(e.target.value)}
+              onBlur={() => {
+                if (!quickAddInput.trim()) {
+                  setShowQuickAdd(false);
+                }
+              }}
+              placeholder="Add task..."
+              className="w-full px-2 py-1 text-xs bg-white/5 border border-white/10 rounded-4 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500"
+            />
+          </form>
+        ) : (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowQuickAdd(true);
+            }}
+            className="w-full mt-2 flex items-center justify-center gap-1 text-xs text-white/40 hover:text-white/60 hover:bg-white/5 py-1 rounded-4 transition"
+          >
+            <Plus className="h-3 w-3" />
+            Add task
+          </button>
+        )}
       </div>
-    </button>
+    </div>
   );
 };
 
-export const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onDayClick }) => {
+export const CalendarView: React.FC<CalendarViewProps> = ({ tasks, projectId, onDayClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
-  const { updateTask } = useTaskStore();
+  const { updateTask, addTask } = useTaskStore();
+
+  // Handle quick add task from calendar
+  const handleQuickAdd = useCallback(
+    (content: string, date: Date) => {
+      addTask({
+        content,
+        projectId,
+        dueDate: date,
+        priority: null,
+      });
+    },
+    [addTask, projectId]
+  );
 
   // Compute days to display based on view mode
   const days = useMemo(() => {
@@ -369,6 +436,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onDayClick })
                   isToday={isDayToday}
                   viewMode={viewMode}
                   onDayClick={onDayClick}
+                  onQuickAdd={handleQuickAdd}
                 />
               );
             })}
