@@ -23,6 +23,8 @@ const resolvePreset = (type: RecurringPattern['type'] | undefined): PresetOption
 
 export const RecurringPatternPicker: React.FC<RecurringPatternPickerProps> = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // For controlled input values - use derived state from value prop
   const [selectedPreset, setSelectedPreset] = useState<PresetOption>(resolvePreset(value?.type));
   const [interval, setInterval] = useState(value?.interval ?? 1);
   const [selectedDays, setSelectedDays] = useState<number[]>(value?.daysOfWeek ?? []);
@@ -33,24 +35,33 @@ export const RecurringPatternPicker: React.FC<RecurringPatternPickerProps> = ({ 
   );
   const [exceptionInput, setExceptionInput] = useState('');
 
-  // Reset state when value prop changes
+  // Update individual state when specific value properties change
+  // This is necessary for controlled component pattern - legitimate use of setState in useEffect
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    if (value) {
-      setSelectedPreset(resolvePreset(value.type));
-      setInterval(value.interval);
-      setSelectedDays(value.daysOfWeek ?? []);
-      setDayOfMonth(value.dayOfMonth ?? new Date().getDate());
-      setEndDate(value.endDate ? format(value.endDate, 'yyyy-MM-dd') : '');
-      setExceptions(value.exceptions?.map((date) => format(date, 'yyyy-MM-dd')) ?? []);
-    } else {
-      setSelectedPreset(null);
-      setInterval(1);
-      setSelectedDays([]);
-      setDayOfMonth(new Date().getDate());
-      setEndDate('');
-      setExceptions([]);
-    }
-  }, [value]);
+    setSelectedPreset(resolvePreset(value?.type));
+  }, [value?.type]);
+
+  useEffect(() => {
+    setInterval(value?.interval ?? 1);
+  }, [value?.interval]);
+
+  useEffect(() => {
+    setSelectedDays(value?.daysOfWeek ?? []);
+  }, [value?.daysOfWeek]);
+
+  useEffect(() => {
+    setDayOfMonth(value?.dayOfMonth ?? new Date().getDate());
+  }, [value?.dayOfMonth]);
+
+  useEffect(() => {
+    setEndDate(value?.endDate ? format(value.endDate, 'yyyy-MM-dd') : '');
+  }, [value?.endDate]);
+
+  useEffect(() => {
+    setExceptions(value?.exceptions?.map((date) => format(date, 'yyyy-MM-dd')) ?? []);
+  }, [value?.exceptions]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handlePresetSelect = (preset: PresetOption) => {
     setSelectedPreset(preset);

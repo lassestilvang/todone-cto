@@ -30,6 +30,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/test/**/*"],
+  "types": ["vitest/globals"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
