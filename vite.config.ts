@@ -17,5 +17,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Ignore the react-is warning from recharts
+        if (warning.code === 'UNRESOLVED_IMPORT' && warning.message.includes('react-is')) {
+          return;
+        }
+        warn(warning);
+      },
+    },
   },
 });

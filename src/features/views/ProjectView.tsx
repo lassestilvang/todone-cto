@@ -79,7 +79,7 @@ export const ProjectView: React.FC = () => {
       <TaskComposer projectId={projectId} placeholder={`Add a task to ${project.name}`} />
 
       {activeViewMode === 'calendar' ? (
-        <CalendarView tasks={projectTasks} />
+        <CalendarView tasks={projectTasks} projectId={projectId} />
       ) : projectSections.length === 0 ? (
         <Card className="text-center text-white/60">
           <Sparkles className="mx-auto mb-3 h-8 w-8 text-brand-400" />
