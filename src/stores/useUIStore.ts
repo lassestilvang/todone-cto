@@ -30,7 +30,7 @@ interface UIState {
   closeCommandPalette: () => void;
 }
 
-export const useUIStore = create<UIState>((set) => ({
+export const useUIStore = create<UIState>()((set) => ({
   activeView: 'today',
   isSidebarOpen: true,
   isQuickAddOpen: false,
@@ -44,10 +44,10 @@ export const useUIStore = create<UIState>((set) => ({
   openQuickAdd: () => set({ isQuickAddOpen: true }),
   closeQuickAdd: () => set({ isQuickAddOpen: false }),
 
-  setActiveView: (view) => set({ activeView: view }),
-  setSelectedProjectId: (id) => set({ selectedProjectId: id }),
+  setActiveView: (view: ActiveView) => set({ activeView: view }),
+  setSelectedProjectId: (id: string | null) => set({ selectedProjectId: id }),
 
-  openTaskDetail: (taskId) => set({ selectedTaskId: taskId, isTaskDetailOpen: true }),
+  openTaskDetail: (taskId: string) => set({ selectedTaskId: taskId, isTaskDetailOpen: true }),
   closeTaskDetail: () => set({ selectedTaskId: null, isTaskDetailOpen: false }),
 
   toggleCommandPalette: () =>

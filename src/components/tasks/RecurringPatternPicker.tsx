@@ -33,23 +33,23 @@ export const RecurringPatternPicker: React.FC<RecurringPatternPickerProps> = ({ 
   );
   const [exceptionInput, setExceptionInput] = useState('');
 
+  // Reset state when value prop changes
   useEffect(() => {
-    if (!value) {
+    if (value) {
+      setSelectedPreset(resolvePreset(value.type));
+      setInterval(value.interval);
+      setSelectedDays(value.daysOfWeek ?? []);
+      setDayOfMonth(value.dayOfMonth ?? new Date().getDate());
+      setEndDate(value.endDate ? format(value.endDate, 'yyyy-MM-dd') : '');
+      setExceptions(value.exceptions?.map((date) => format(date, 'yyyy-MM-dd')) ?? []);
+    } else {
       setSelectedPreset(null);
       setInterval(1);
       setSelectedDays([]);
       setDayOfMonth(new Date().getDate());
       setEndDate('');
       setExceptions([]);
-      return;
     }
-
-    setSelectedPreset(resolvePreset(value.type));
-    setInterval(value.interval);
-    setSelectedDays(value.daysOfWeek ?? []);
-    setDayOfMonth(value.dayOfMonth ?? new Date().getDate());
-    setEndDate(value.endDate ? format(value.endDate, 'yyyy-MM-dd') : '');
-    setExceptions(value.exceptions?.map((date) => format(date, 'yyyy-MM-dd')) ?? []);
   }, [value]);
 
   const handlePresetSelect = (preset: PresetOption) => {
