@@ -148,7 +148,7 @@ const applyAccentColor = (color: string) => {
   root.style.setProperty('--brand-500', color);
 };
 
-export const useSettingsStore = create<SettingsState>((set, get) => {
+export const useSettingsStore = create<SettingsState>()((set, get) => {
   const initialSettings = loadFromStorageHelper();
 
   // Apply initial theme and accent color

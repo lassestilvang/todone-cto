@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { LayoutGrid, Columns, CalendarRange, Sparkles } from 'lucide-react';
 import { useProjectStore } from '@/stores/useProjectStore';
@@ -20,7 +20,6 @@ export const ProjectView: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { projects, sections, updateProject } = useProjectStore();
   const { getTasksByProject } = useTaskStore();
-  const [activeViewMode, setActiveViewMode] = useState<'list' | 'board' | 'calendar'>('list');
 
   const project = projects.find((p) => p.id === projectId);
   const projectSections = sections.filter((section) => section.projectId === projectId);
@@ -29,11 +28,16 @@ export const ProjectView: React.FC = () => {
     projectId,
   ]);
 
-  useEffect(() => {
-    if (project?.viewType && ['list', 'board', 'calendar'].includes(project.viewType)) {
-      setActiveViewMode(project.viewType as 'list' | 'board' | 'calendar');
+  // Always use project viewType directly, no state synchronization needed
+  const activeViewMode = (project?.viewType && ['list', 'board', 'calendar'].includes(project.viewType))
+    ? (project.viewType as 'list' | 'board' | 'calendar')
+    : 'list';
+
+  const handleViewModeChange = (mode: 'list' | 'board' | 'calendar') => {
+    if (project && project.viewType !== mode) {
+      updateProject(project.id, { viewType: mode });
     }
-  }, [project?.viewType]);
+  };
 
   if (!project) {
     return (
@@ -57,10 +61,7 @@ export const ProjectView: React.FC = () => {
               key={id}
               onClick={() => {
                 const mode = id as 'list' | 'board' | 'calendar';
-                setActiveViewMode(mode);
-                if (project && project.viewType !== mode) {
-                  updateProject(project.id, { viewType: mode });
-                }
+                handleViewModeChange(mode);
               }}
               className={cn(
                 'flex items-center gap-1 rounded-6 border px-3 py-1.5 text-xs transition',

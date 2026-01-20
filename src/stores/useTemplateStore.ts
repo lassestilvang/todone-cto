@@ -26,17 +26,17 @@ const buildInitialTemplates = (): Template[] =>
     updatedAt: new Date(),
   }));
 
-export const useTemplateStore = create<TemplateState>((set, get) => ({
+export const useTemplateStore = create<TemplateState>()((set, get) => ({
   templates: buildInitialTemplates(),
 
-  getTemplateById: (id) => get().templates.find((template) => template.id === id),
+  getTemplateById: (id: string) => get().templates.find((template) => template.id === id),
 
-  getTemplatesByCategory: (category) =>
-    get().templates.filter((template) => template.category === category),
+  getTemplatesByCategory: (category: string) =>
+    get().templates.filter((template: Template) => template.category === category),
 
   getCategories: () => {
-    const categories = Array.from(new Set(get().templates.map((template) => template.category)));
-    return categories.sort((a, b) => {
+    const categories = Array.from(new Set(get().templates.map((template: Template) => template.category))) as string[];
+    return categories.sort((a: string, b: string) => {
       const indexA = CATEGORY_ORDER.indexOf(a);
       const indexB = CATEGORY_ORDER.indexOf(b);
 
@@ -47,7 +47,12 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     });
   },
 
-  addCustomTemplate: (name, description, category, structure) => {
+  addCustomTemplate: (
+    name: string,
+    description: string,
+    category: string,
+    structure: TemplateStructure,
+  ) => {
     const newTemplate: Template = {
       id: generateId(),
       name,
